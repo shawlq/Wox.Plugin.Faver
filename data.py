@@ -48,7 +48,7 @@ class Info:
     def Get(cls, label, sn):
         results = []
         for lbl, infos in Data.Load().items():
-            if label and label not in lbl:
+            if label and label is not '*' and label not in lbl:
                 continue
             for info in infos:
                 if sn and sn not in info[Info.SN]:
