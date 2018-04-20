@@ -9,9 +9,9 @@ class QueryString:
     @classmethod
     def Parse(cls, key):
         if not key:
-            return None, None
+            return '', ''
         logger.debug("QueryString.Parse:key:%s, has_space:%s.", key.split(" ", 1), " " in key)
-        return key.split(" ", 1) if (" " in key) else (key, None)
+        return key.split(" ", 1) if (" " in key) else (key, '')
 
 
 
@@ -50,8 +50,8 @@ class Main(Wox):
     def listall(self, label = None, sn = None):
         try:
             results = []
-            for lbl, s_n, data in ToSee.List(label, sn):
-                results.append(Helper.ShowList(lbl, s_n, data, "click"))
+            for lbl, s_n, data, freq in ToSee.List(label, sn):
+                results.append(Helper.ShowList(lbl, s_n, data,freq, "click"))
             return results if results else Helper.Show("NO", "DATA")
         except Exception as e:
             logger.exception("[main] listall except:%s", str(e))

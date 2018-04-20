@@ -71,10 +71,10 @@ class Helper:
                     ]
 
     @classmethod
-    def ShowList(cls, label, sn, data, clickcb):
+    def ShowList(cls, label, sn, data, freq, clickcb):
         return  {
                     "Title": "[%s] <%s>" % (label, sn),
-                    "SubTitle": "url: %s" % data,
+                    "SubTitle": "Frequently: %s, url: %s" % (freq, data),
                     "IcoPath": "Images/pic.png",
                     "JsonRPCAction": {
                         "method": clickcb,
