@@ -1,1 +1,1 @@
-# Wox.Plugin.Faver
+# Wox.Plugin.Faver --
