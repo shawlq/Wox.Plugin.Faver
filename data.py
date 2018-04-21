@@ -9,18 +9,14 @@ class Data:
 
     @classmethod
     def Load(cls):
-        results = {}
         with open (cls.DATA_PATH, "r") as f:
-            for line in f:
-                results.update(json.loads(line.strip()))
-        return results
+            infos = f.read()
+            return json.loads(infos) if infos else {}
 
 class Info:
 
     SEG = "|"
     DEFAULT = "*"
-    SN = "sn"
-    DATA = "dat"
 
     @classmethod
     def Parse2Str(cls, para):
@@ -38,22 +34,28 @@ class Info:
 
     @classmethod
     def Save(cls, label, sn, data):
+        # {label : {sn : url} }
         infos = Data.Load()
         if label not in infos:
-            infos[label] = []
-        infos[label].append({Info.SN:sn,Info.DATA:data})
+            infos[label] = {}
+        if sn not in infos[label]:
+            infos[label][sn] = []
+        infos[label][sn].append(data)
         Data.Save(infos)
 
     @classmethod
     def Get(cls, label, sn):
+        label = label if label is not '*' else ''
         results = []
-        for lbl, infos in Data.Load().items():
+        for lbl, sn_dict in Data.Load().items():
             if label and label not in lbl:
                 continue
-            for info in infos:
-                if sn and sn not in info[Info.SN]:
+            for snkey, datas in sn_dict.items():
+                if sn and sn not in snkey:
                     continue
-                results.append([lbl, info[Info.SN], info[Info.DATA]])
+
+                for data in datas:
+                    results.append([lbl, snkey, data])
         return results
 
 

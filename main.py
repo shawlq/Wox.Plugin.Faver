@@ -52,7 +52,7 @@ class Main(Wox):
             results = []
             for lbl, s_n, data in ToSee.List(label, sn):
                 results.append(Helper.ShowList(lbl, s_n, data, "click"))
-            return results if results else Helper.Show("NO", "DATA")
+            return results if results else Helper.Show(label, "")
         except Exception as e:
             logger.exception("[main] listall except:%s", str(e))
             return []

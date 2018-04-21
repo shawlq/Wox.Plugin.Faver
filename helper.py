@@ -6,9 +6,9 @@ class Helper:
     def HELP_NONE(cls, cmd):
 
         return  {
-                    "Title": "delete %s" % cmd,
+                    "Title": "Not Found <%s>" % cmd,
                     "SubTitle": "",
-                    "IcoPath": "Images/pic.png",
+                    "IcoPath": "Images/notfound.png",
                     "JsonRPCAction": {
                         "method": "donothing",
                         "parameters": ["", ],
@@ -22,7 +22,7 @@ class Helper:
         return  {
                     "Title": "todo add %s" % para,
                     "SubTitle": "Typing <todo add [label|sn|url]> for adding a new url",
-                    "IcoPath": "Images/pic.png",
+                    "IcoPath": "Images/add.png",
                     "JsonRPCAction": {
                         "method": "add",
                         "parameters": [para, ],
@@ -36,7 +36,7 @@ class Helper:
         return  {
                     "Title": "todo erase %s" % para,
                     "SubTitle": "Typing <todo erase [label|sn]> for erase a specific short name",
-                    "IcoPath": "Images/pic.png",
+                    "IcoPath": "Images/erase.png",
                     "JsonRPCAction": {
                         "method": "erase",
                         "parameters": [para, ],
@@ -50,7 +50,7 @@ class Helper:
         return  {
                     "Title": "todo delete %s" % para,
                     "SubTitle": "Typing <todo delete [label]> for delete a specific label",
-                    "IcoPath": "Images/pic.png",
+                    "IcoPath": "Images/delete.png",
                     "JsonRPCAction": {
                         "method": "delete",
                         "parameters": [para, ],
@@ -72,10 +72,11 @@ class Helper:
 
     @classmethod
     def ShowList(cls, label, sn, data, clickcb):
+        from random import randint
         return  {
                     "Title": "[%s] <%s>" % (label, sn),
                     "SubTitle": "url: %s" % data,
-                    "IcoPath": "Images/pic.png",
+                    "IcoPath": "Images/click%s.png"%randint(0,2),
                     "JsonRPCAction": {
                         "method": clickcb,
                         "parameters": [data, ],
