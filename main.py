@@ -37,7 +37,7 @@ class Main(Wox):
 
     def erase(self, para):
         try:
-            ToSee.Erase(para)
+            ToSee.Erase(para):
         except Exception as e:
             logger.exception("[main] erase except:%s", str(e))
 

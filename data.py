@@ -26,7 +26,6 @@ class Info:
             for p in para.split(cls.SEG):
                 l[i] = p.strip()
                 i += 1
-            l[0] = l[0] if l[0] else cls.DEFAULT
             return l
         except Exception as e:
             logger.exception("Info.Parse2Str except:%s", str(e))
@@ -42,6 +41,7 @@ class Info:
             infos[label][sn] = []
         infos[label][sn].append(data)
         Data.Save(infos)
+        return True
 
     @classmethod
     def Get(cls, label, sn):
@@ -58,5 +58,25 @@ class Info:
                     results.append([lbl, snkey, data])
         return results
 
+    @classmethod
+    def Erase(cls, label, sn):
+        if not label or not sn:
+            return False
+        infos = Data.Load()
+        if label in infos and sn in infos[label]:
+            del infos[label][sn]
+            Data.Save(infos)
+            return True
+        return False
 
 
+    @classmethod
+    def Delete(cls, label):
+        if not label:
+            return False
+        infos = Data.Load()
+        if label in infos:
+            del infos[label]
+            Data.Save(infos)
+            return True
+        return False
