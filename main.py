@@ -22,12 +22,10 @@ class Main(Wox):
 
         if cmd in Helper.ACTIONS:
             #logger.debug("[main] query:%s, cmd:%s,para:%s.", key, cmd, para)
-            return  [
-                        Helper.Show(cmd, para)
-                    ]
+            return self.showall(cmd, para)
 
         results = self.listall(cmd, para)
-        return results if len(results) != 0 else Helper.Show(cmd, para)
+        return results
 
     def add(self, para):
         try:
@@ -37,7 +35,7 @@ class Main(Wox):
 
     def erase(self, para):
         try:
-            ToSee.Erase(para):
+            ToSee.Erase(para)
         except Exception as e:
             logger.exception("[main] erase except:%s", str(e))
 
@@ -47,12 +45,23 @@ class Main(Wox):
         except Exception as e:
             logger.exception("[main] delete except:%s", str(e))
 
+    def showall(self, cmd, para):
+        try:
+            results = []
+            label, sn, _ = ToSee.Parse(para)
+            for lbl, s_n, data in ToSee.List(label, sn):
+                results.append(Helper.ShowList(lbl, s_n, data, para, cmd))
+            return results if len(results) != 0 else Helper.Show(cmd, para)
+        except Exception as e:
+            logger.exception("[main] listall except:%s", str(e))
+            return []
+
     def listall(self, label = None, sn = None):
         try:
             results = []
             for lbl, s_n, data in ToSee.List(label, sn):
-                results.append(Helper.ShowList(lbl, s_n, data, "click"))
-            return results if results else Helper.Show(label, "")
+                results.append(Helper.ShowList(lbl, s_n, data, data, "click"))
+            return results if len(results) != 0 else Helper.Show(label, sn)
         except Exception as e:
             logger.exception("[main] listall except:%s", str(e))
             return []

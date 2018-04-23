@@ -20,7 +20,7 @@ class Helper:
     def HELP_ADD(cls, cmd, para):
         para = para if para else "[label|sn|url]"
         return  {
-                    "Title": "todo add %s" % para,
+                    "Title": "to add %s" % para,
                     "SubTitle": "Typing <todo add [label|sn|url]> for adding a new url",
                     "IcoPath": "Images/add.png",
                     "JsonRPCAction": {
@@ -34,8 +34,8 @@ class Helper:
     def HELP_ERASE(cls, cmd, para):
         para = para if para else "[label|sn]"
         return  {
-                    "Title": "todo erase %s" % para,
-                    "SubTitle": "Typing <todo erase [label|sn]> for erase a specific short name",
+                    "Title": "to erase [%s] NOT FOUND" % para,
+                    "SubTitle": "Typing <todo erase [label|sn|]>, the last | for confirming to erase a short name",
                     "IcoPath": "Images/erase.png",
                     "JsonRPCAction": {
                         "method": "erase",
@@ -48,8 +48,8 @@ class Helper:
     def HELP_DELETE(cls, cmd, para):
         para = para if para else "[label]"
         return  {
-                    "Title": "todo delete %s" % para,
-                    "SubTitle": "Typing <todo delete [label]> for delete a specific label",
+                    "Title": "to delete [%s] NOT FOUND" % para,
+                    "SubTitle": "Typing <todo delete [label||]>, the last double | for confirming to delete a label",
                     "IcoPath": "Images/delete.png",
                     "JsonRPCAction": {
                         "method": "delete",
@@ -61,7 +61,7 @@ class Helper:
     @classmethod
     def Show(cls, cmd = None, para = None):
         if cmd and hasattr(cls, "HELP_%s"%cmd.upper()):
-            return getattr(cls, "HELP_%s"%cmd.upper())(cmd, para)
+            return [ getattr(cls, "HELP_%s"%cmd.upper())(cmd, para) ]
         else:
             return  [
                         cls.HELP_NONE(cmd),
@@ -71,15 +71,15 @@ class Helper:
                     ]
 
     @classmethod
-    def ShowList(cls, label, sn, data, clickcb):
+    def ShowList(cls, label, sn, data, fn_para, click_fn):
         from random import randint
         return  {
                     "Title": "[%s] <%s>" % (label, sn),
                     "SubTitle": "url: %s" % data,
                     "IcoPath": "Images/click%s.png"%randint(0,2),
                     "JsonRPCAction": {
-                        "method": clickcb,
-                        "parameters": [data, ],
+                        "method": click_fn,
+                        "parameters": [fn_para, ],
                         "dontHideAfterAction": True
                     }
                 }

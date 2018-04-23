@@ -1,5 +1,5 @@
 import json
-
+from log import logger
 class Data:
     DATA_PATH = r"./DB/db.json"
     @classmethod
@@ -45,6 +45,7 @@ class Info:
 
     @classmethod
     def Get(cls, label, sn):
+        logger.info("data.get:%s, %s", label, sn)
         label = label if label is not '*' else ''
         results = []
         for lbl, sn_dict in Data.Load().items():
