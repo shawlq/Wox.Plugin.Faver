@@ -28,6 +28,7 @@ class Info:
                 i += 1
             return l
         except Exception as e:
+            from log import logger
             logger.exception("Info.Parse2Str except:%s", str(e))
             return None, None, None
 
@@ -48,10 +49,10 @@ class Info:
         label = label if label is not '*' else ''
         results = []
         for lbl, sn_dict in Data.Load().items():
-            if label and label not in lbl:
+            if label and label.lower() not in lbl.lower():
                 continue
             for snkey, datas in sn_dict.items():
-                if sn and sn not in snkey:
+                if sn and sn.lower() not in snkey.lower():
                     continue
 
                 for data in datas:
