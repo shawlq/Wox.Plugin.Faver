@@ -1,4 +1,4 @@
-from log import logger
+
 from data import Info
 class ToSee:
 

@@ -1,5 +1,5 @@
 import json
-from log import logger
+
 class Data:
     DATA_PATH = r"./DB/db.json"
     @classmethod
@@ -28,6 +28,7 @@ class Info:
                 i += 1
             return l
         except Exception as e:
+            from log import logger
             logger.exception("Info.Parse2Str except:%s", str(e))
             return None, None, None
 
