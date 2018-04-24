@@ -17,7 +17,6 @@ class ToSee:
         label, sn, data = cls.Parse(para)
         label = label if label else Info.DEFAULT
         if not label or not sn or not data:
-            logger.info("ToSee.Add:%s,%s,%s.", label, sn, data)
             return
 
         if Info.Save(label, sn, data):

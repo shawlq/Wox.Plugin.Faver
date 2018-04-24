@@ -19,13 +19,7 @@ class Main(Wox):
     def query(self, key):
         cmd, para = QueryString.Parse(key)
         logger.debug("[main]----key----:%s, cmd:%s, para:%s.", key, cmd, para)
-
-        if cmd in Helper.ACTIONS:
-            #logger.debug("[main] query:%s, cmd:%s,para:%s.", key, cmd, para)
-            return self.showall(cmd, para)
-
-        results = self.listall(cmd, para)
-        return results
+        return self.showcmd(cmd, para) if cmd in Helper.ACTIONS else self.listall(cmd, para)
 
     def add(self, para):
         try:
@@ -45,12 +39,12 @@ class Main(Wox):
         except Exception as e:
             logger.exception("[main] delete except:%s", str(e))
 
-    def showall(self, cmd, para):
+    def showcmd(self, cmd, para):
         try:
             results = []
             label, sn, _ = ToSee.Parse(para)
             for lbl, s_n, data in ToSee.List(label, sn):
-                results.append(Helper.ShowList(lbl, s_n, data, para, cmd))
+                results.append(Helper.ShowCmd(cmd, para, lbl, s_n, data))
             return results if len(results) != 0 else Helper.Show(cmd, para)
         except Exception as e:
             logger.exception("[main] listall except:%s", str(e))

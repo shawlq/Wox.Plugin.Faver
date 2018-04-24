@@ -45,14 +45,13 @@ class Info:
 
     @classmethod
     def Get(cls, label, sn):
-        logger.info("data.get:%s, %s", label, sn)
         label = label if label is not '*' else ''
         results = []
         for lbl, sn_dict in Data.Load().items():
-            if label and label not in lbl:
+            if label and label.lower() not in lbl.lower():
                 continue
             for snkey, datas in sn_dict.items():
-                if sn and sn not in snkey:
+                if sn and sn.lower() not in snkey.lower():
                     continue
 
                 for data in datas:
