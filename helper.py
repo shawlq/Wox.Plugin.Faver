@@ -76,7 +76,7 @@ class Helper:
         return  {
                     "Title": "[%s] <%s>" % (label, sn),
                     "SubTitle": "url: %s" % data,
-                    "IcoPath": "Images/click%s.png"%randint(0,2),
+                    "IcoPath": "Images/click%s.png"%randint(0,3),
                     "JsonRPCAction": {
                         "method": u"%s"%click_fn,
                         "parameters": [fn_para, ],
