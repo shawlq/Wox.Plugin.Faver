@@ -1,10 +1,10 @@
 {
-    "ID":"99999999999999999999999999999999",
-    "ActionKeyword":"to",
+    "ID":"923D45C248A511E8B60F2CF0EE1A4782",
+    "ActionKeyword":"f",
     "Name":"Faver",
     "Description":"save your favorite weburl, and fastly visit them.",
     "Author":"shawlq",
-    "Version":"0.0.1",
+    "Version":"1.0.1",
     "Language":"python",
     "Website":"https://github.com/shawlq/Wox.Plugin.Faver.git",
     "IcoPath": "Images\\pic.png", 

@@ -88,7 +88,7 @@ class Helper:
     def SHOW_ADD(cls, para, label, sn, data):
         return  {
                     "Title": "[%s] <%s> : %s" % (label, sn, data),
-                    "SubTitle": "to add %s, May you want to add [label|sn|url] for saving a new url",
+                    "SubTitle": "to add %s, May you want to add [label|sn|url] for saving a new url" % para,
                     "IcoPath": "Images/add.png",
                     "JsonRPCAction": {
                         "method": "add",
