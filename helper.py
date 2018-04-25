@@ -88,7 +88,7 @@ class Helper:
     def SHOW_ADD(cls, para, label, sn, data):
         return  {
                     "Title": "[%s] <%s> : %s" % (label, sn, data),
-                    "SubTitle": "to add %s, may you want to add [label|sn|url] for saving a new url",
+                    "SubTitle": "to add %s, May you want to add [label|sn|url] for saving a new url",
                     "IcoPath": "Images/add.png",
                     "JsonRPCAction": {
                         "method": "add",
@@ -101,7 +101,7 @@ class Helper:
     def SHOW_ERASE(cls, para, label, sn, data):
         return  {
                     "Title": "[%s] <%s> : %s" % (label, sn, data),
-                    "SubTitle": "to erase %s, may you want to erase [%s|%s|]" % (para, label, sn),
+                    "SubTitle": "to erase %s, May you want to erase [%s|%s|]" % (para, label, sn),
                     "IcoPath": "Images/erase.png",
                     "JsonRPCAction": {
                         "method": "erase",
@@ -114,7 +114,7 @@ class Helper:
     def SHOW_DELETE(cls, para, label, sn, data):
         return  {
                     "Title": "[%s] <%s> : %s" % (label, sn, data),
-                    "SubTitle": "to delete %s, may you want to delete [%s||]" % (para, label),
+                    "SubTitle": "to delete %s, May you want to delete [%s||]" % (para, label),
                     "IcoPath": "Images/delete.png",
                     "JsonRPCAction": {
                         "method": "delete",

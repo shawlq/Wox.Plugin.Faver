@@ -47,7 +47,7 @@ class Main(Wox):
                 results.append(Helper.ShowCmd(cmd, para, lbl, s_n, data))
             return results if len(results) != 0 else Helper.Show(cmd, para)
         except Exception as e:
-            logger.exception("[main] listall except:%s", str(e))
+            logger.exception("[main] showcmd except:%s", str(e))
             return []
 
     def listall(self, label = None, sn = None):
