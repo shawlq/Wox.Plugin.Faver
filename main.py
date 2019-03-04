@@ -1,6 +1,6 @@
 # coding:utf-8
 from wox import Wox
-from faves import ToSee
+from faves import Faver
 from log import logger
 
 from helper import Helper
@@ -16,55 +16,60 @@ class QueryString:
 
 
 class Main(Wox):
-    def query(self, key):
-        cmd, para = QueryString.Parse(key)
+    def query(self, inputs):
+        cmd, para = QueryString.Parse(inputs)
         logger.debug("[main]----key----:%s, cmd:%s, para:%s.", key, cmd, para)
-        return self.showcmd(cmd, para) if cmd in Helper.ACTIONS else self.listall(cmd, para)
+        return self.showcmd(cmd, para) if cmd in Helper.ACTIONS else self.listall(inputs)
 
-    def add(self, para):
+    def tag(self, para):
         try:
-            ToSee.Add(para)
+            Faver.Tag(para)
         except Exception as e:
-            logger.exception("[main] add except:%s", str(e))
+            logger.exception("[main] tag except:%s", str(e))
 
-    def erase(self, para):
+    def untag(self, para):
         try:
-            ToSee.Erase(para)
+            Faver.Untag(para)
         except Exception as e:
-            logger.exception("[main] erase except:%s", str(e))
-
-    def delete(self, para):
-        try:
-            ToSee.Delete(para)
-        except Exception as e:
-            logger.exception("[main] delete except:%s", str(e))
+            logger.exception("[main] untag except:%s", str(e))
 
     def showcmd(self, cmd, para):
         try:
             results = []
-            label, sn, _ = ToSee.Parse(para)
-            for lbl, s_n, data in ToSee.List(label, sn):
+            # TODO：label, sn, _ = Faver.Parse(para)
+            for lbl, s_n, data in Faver.List(label, sn):
                 results.append(Helper.ShowCmd(cmd, para, lbl, s_n, data))
             return results if len(results) != 0 else Helper.Show(cmd, para)
         except Exception as e:
             logger.exception("[main] showcmd except:%s", str(e))
             return []
 
-    def listall(self, label = None, sn = None):
+    def listall(self, para = None):
         try:
             results = []
-            for lbl, s_n, data in ToSee.List(label, sn):
-                results.append(Helper.ShowList(lbl, s_n, data, data, "click"))
+            descript = "&".join(para.split(" "))
+            for url in Faver.List(para):
+                results.append(Helper.ShowList(descript, url, url, "clickforurl"))
+
+            for labels_descript in Faver.FindLabels(para):
+                results.append(Helper.ShowList(labels_descript, "", labels_descript, "clickforurl"))
+
             return results if len(results) != 0 else Helper.Show(label, sn)
         except Exception as e:
             logger.exception("[main] listall except:%s", str(e))
             return []
 
-    def click(self, data):
+    def clickforurl(self, data):
         try:
-            ToSee.Click(data)
+            Faver.Click(data)
         except Exception as e:
-            logger.exception("[main] click except:%s", str(e))  
+            logger.exception("[main] click except:%s", str(e))
+
+    def clickforlabel(self, para):
+        return self.listall(para)
+
+    def clickforuntag(self, para):
+        return Faver.Untag(para)
 
     def donothing(self, para):
     	pass      

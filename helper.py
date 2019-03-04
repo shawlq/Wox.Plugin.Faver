@@ -71,10 +71,10 @@ class Helper:
                     ]
 
     @classmethod
-    def ShowList(cls, label, sn, data, fn_para, click_fn):
+    def ShowList(cls, descript, data, fn_para, click_fn):
         from random import randint
         return  {
-                    "Title": "[%s] <%s>" % (label, sn),
+                    "Title": "%s" % (descript),
                     "SubTitle": "url: %s" % data,
                     "IcoPath": "Images/click%s.png"%randint(0,3),
                     "JsonRPCAction": {
