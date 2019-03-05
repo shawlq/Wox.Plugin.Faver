@@ -29,9 +29,14 @@ class Main(Wox):
 
     def untag(self, para):
         try:
-            Faver.Untag(para)
+            results = []
+            descript = " & ".join(para.split(" "))
+            for url in Faver.List(para):
+                results.append(Helper.ShowList(descript, url, " ".join(para,url), "clickforuntag"))
+            return results if len(results) != 0 else [Helper.HELP_NONE(descript)]
         except Exception as e:
             logger.exception("[main] untag except:%s", str(e))
+            return []
 
     def showcmd(self, cmd, para):
         try:
@@ -47,21 +52,21 @@ class Main(Wox):
     def listall(self, para = None):
         try:
             results = []
-            descript = "&".join(para.split(" "))
+            descript = " & ".join(para.split(" "))
             for url in Faver.List(para):
                 results.append(Helper.ShowList(descript, url, url, "clickforurl"))
 
             for labels_descript in Faver.FindLabels(para):
-                results.append(Helper.ShowList(labels_descript, "", labels_descript, "clickforurl"))
+                results.append(Helper.ShowList(labels_descript, "", labels_descript, "clickforlabel"))
 
-            return results if len(results) != 0 else Helper.Show(label, sn)
+            return results if len(results) != 0 else [Helper.HELP_NONE(descript)]
         except Exception as e:
             logger.exception("[main] listall except:%s", str(e))
             return []
 
-    def clickforurl(self, data):
+    def clickforurl(self, para):
         try:
-            Faver.Click(data)
+            Faver.Click(para)
         except Exception as e:
             logger.exception("[main] click except:%s", str(e))
 
@@ -69,7 +74,11 @@ class Main(Wox):
         return self.listall(para)
 
     def clickforuntag(self, para):
-        return Faver.Untag(para)
+        try:
+            Faver.Untag(para)
+        except Exception as e:
+            logger.exception("[main] click for untag except:%s", str(e))
+        
 
     def donothing(self, para):
     	pass      

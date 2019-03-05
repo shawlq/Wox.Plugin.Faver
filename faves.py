@@ -112,7 +112,8 @@ class Faver:
 
     @classmethod
     def FindLabels(cls, para):
-        args = para.split(" ")
+        #args = para.split(" ")
+        return []
         
     @classmethod
     def Click(cls, url):
