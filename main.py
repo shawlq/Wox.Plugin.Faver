@@ -1,9 +1,11 @@
 # coding:utf-8
 from wox import Wox
-from faves import Faver
 from log import logger
-
-from helper import Helper
+try:
+    from faves import Faver
+    from helper import Helper
+except Exception as e:
+    logger.exception("import exception:%s"%str(e))
 
 class QueryString:
     @classmethod
@@ -17,9 +19,12 @@ class QueryString:
 
 class Main(Wox):
     def query(self, inputs):
-        cmd, para = QueryString.Parse(inputs)
-        logger.debug("[main]----key----:%s, cmd:%s, para:%s.", key, cmd, para)
-        return self.showcmd(cmd, para) if cmd in Helper.ACTIONS else self.listall(inputs)
+        try:
+            cmd, para = QueryString.Parse(inputs)
+            logger.debug("[main]----query---- split to :%s, %s.", cmd, para)
+            return self.showcmd(cmd, para) if cmd in Helper.ACTIONS else self.listall(inputs)
+        except Exception as e:
+            logger.exception("query exception:%s"%str(e))
 
     def tag(self, para):
         try:
@@ -32,7 +37,9 @@ class Main(Wox):
             results = []
             descript = " & ".join(para.split(" "))
             for url in Faver.List(para):
-                results.append(Helper.ShowList(descript, url, " ".join(para,url), "clickforuntag"))
+                new_para = " ".join([para,url])
+                logger.debug("untag, url:%s, new_para:%s", url, new_para)
+                results.append(Helper.ShowList(descript, url, new_para, "clickforuntag"))
             return results if len(results) != 0 else [Helper.HELP_NONE(descript)]
         except Exception as e:
             logger.exception("[main] untag except:%s", str(e))
@@ -41,10 +48,11 @@ class Main(Wox):
     def showcmd(self, cmd, para):
         try:
             results = []
-            # TODO：label, sn, _ = Faver.Parse(para)
-            for lbl, s_n, data in Faver.List(label, sn):
-                results.append(Helper.ShowCmd(cmd, para, lbl, s_n, data))
-            return results if len(results) != 0 else Helper.Show(cmd, para)
+            if cmd == "untag":
+                results = self.untag(para)
+            else:
+                results.append(Helper.ShowCmd(cmd, para))
+            return results
         except Exception as e:
             logger.exception("[main] showcmd except:%s", str(e))
             return []
@@ -53,6 +61,7 @@ class Main(Wox):
         try:
             results = []
             descript = " & ".join(para.split(" "))
+            logger.debug("listall para:%s", para)
             for url in Faver.List(para):
                 results.append(Helper.ShowList(descript, url, url, "clickforurl"))
 
