@@ -60,7 +60,7 @@
 # 如何安装
 ## 1. 通过**Wox**插件管理安装，请参考[**Wox官网**](http://www.wox.one)。
 ## 2. 离线安装：
-- 下载**Faver仓库：git@github.com:shawlq/Wox.Plugin.Faver.git
+- 下载**Faver**仓库：git@github.com:shawlq/Wox.Plugin.Faver.git
 - 把代码目录Wox.Plugin.Faver拷贝到Wox的插件目录，例如C:\Users\Shawl\AppData\Local\Wox\app-1.3.578\Plugins，如果找不到路径，就用**Wox**搜索
 - 重启**Wox**。
 
