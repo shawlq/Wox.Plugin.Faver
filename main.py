@@ -12,63 +12,70 @@ class QueryString:
     def Parse(cls, key):
         if not key:
             return None, None
-        logger.debug("QueryString.Parse:key:%s, has_space:%s.", key.split(" ", 1), " " in key)
         return key.split(" ", 1) if (" " in key) else (key, None)
 
 
 
 class Main(Wox):
+    def __init__(self):
+        self.__cmds = ['tag', 'untag']
+        super().__init__()
+        
+
     def query(self, inputs):
+        logger.debug("query, inputs:%s", inputs)
         try:
+            if not inputs:
+                return Helper.ShowHelp()
+
             cmd, para = QueryString.Parse(inputs)
-            logger.debug("[main]----query---- split to :%s, %s.", cmd, para)
-            return self.showcmd(cmd, para) if cmd in Helper.ACTIONS else self.listall(inputs)
+            if cmd in self.__cmds:
+                return getattr(self, "%s"%cmd)(para)
+
+            return self.showlist(inputs)
         except Exception as e:
             logger.exception("query exception:%s"%str(e))
 
     def tag(self, para):
         try:
-            Faver.Tag(para)
+            para = "" if para is None else para
+            args = para.split(" ")
+            if (len(args) < 2):
+                return [Helper.HELP_NONE("at least one label and one url")]
+            return [Helper.ShowList("tag %s for url:%s"%(" & ".join(args[:-1]), args[-1]), "click for comfirm", para, "clickfortag")]
         except Exception as e:
             logger.exception("[main] tag except:%s", str(e))
 
     def untag(self, para):
+        if not para:
+            return [Helper.HELP_NONE("at least one label")]
+        def Result(labels, url):
+            return Helper.ShowList(labels.replace(" ", " & "), url, " ".join([labels, url]), "clickforuntag")
+
+        return self.listin(para, Result)
+
+    def showlist(self, para = None):
+        def Result(labels, url):
+            return Helper.ShowList(labels.replace(" ", " & "), url, url, "clickforurl")
+
+        return self.listin(para, Result)
+
+    def listin(self, para, Result):
         try:
             results = []
-            descript = " & ".join(para.split(" "))
-            for url in Faver.List(para):
-                new_para = " ".join([para,url])
-                logger.debug("untag, url:%s, new_para:%s", url, new_para)
-                results.append(Helper.ShowList(descript, url, new_para, "clickforuntag"))
-            return results if len(results) != 0 else [Helper.HELP_NONE(descript)]
-        except Exception as e:
-            logger.exception("[main] untag except:%s", str(e))
-            return []
+            sucess, msg, found, no_mores = Faver.List(para)
+            if not sucess:
+                return [Helper.HELP_NONE(msg)]
 
-    def showcmd(self, cmd, para):
-        try:
-            results = []
-            if cmd == "untag":
-                results = self.untag(para)
-            else:
-                results.append(Helper.ShowCmd(cmd, para))
-            return results
-        except Exception as e:
-            logger.exception("[main] showcmd except:%s", str(e))
-            return []
+            for labels, urls in found:
+                logger.debug("listin:%s", labels)
+                for url in urls:
+                    results.append(Result(labels, url))
 
-    def listall(self, para = None):
-        try:
-            results = []
-            descript = " & ".join(para.split(" "))
-            logger.debug("listall para:%s", para)
-            for url in Faver.List(para):
-                results.append(Helper.ShowList(descript, url, url, "clickforurl"))
+            for labels, msg in no_mores:
+                results.append(Helper.ShowList(labels.replace(" ", " & "), msg, "", "donothing"))
 
-            for labels_descript in Faver.FindLabels(para):
-                results.append(Helper.ShowList(labels_descript, "", labels_descript, "clickforlabel"))
-
-            return results if len(results) != 0 else [Helper.HELP_NONE(descript)]
+            return results if len(results) != 0 else [Helper.HELP_NONE("Nothing Found for '%s'."%para.replace(" ", " & "))]
         except Exception as e:
             logger.exception("[main] listall except:%s", str(e))
             return []
@@ -82,12 +89,21 @@ class Main(Wox):
     def clickforlabel(self, para):
         return self.listall(para)
 
+    def clickfortag(self, para):
+        try:
+            para = "" if para is None else para
+            args = para.split(" ")
+            if (len(args) < 2):
+                return [Helper.HELP_NONE("at least one label and one url")]
+            Faver.Tag(args)
+        except Exception as e:
+            logger.exception("[main] tag except:%s", str(e))
+
     def clickforuntag(self, para):
         try:
             Faver.Untag(para)
         except Exception as e:
             logger.exception("[main] click for untag except:%s", str(e))
-        
 
     def donothing(self, para):
     	pass      

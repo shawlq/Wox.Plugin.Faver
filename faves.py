@@ -1,6 +1,5 @@
 import os, json
 from log import logger
-
 class Data:
     DATA_PREFIX = r"./data"
 
@@ -9,19 +8,18 @@ class Data:
         return os.path.join(cls.DATA_PREFIX, k + ".json")
 
     @classmethod
+    def Exists(cls, k):
+        return os.path.exists(cls.__db_path(k))
+
+    @classmethod
     # void
     def Set(cls, k, d):
-        logger.debug("Data.Set, k:%s, d:%s", k, d)
         with open (cls.__db_path(k), "w") as f:
             f.write(json.dumps(list(d)))
 
     @classmethod
     #return list of url [url, url]
     def Get(cls, k):
-        logger.debug("Data.Get, k:%s",k)
-        if not os.path.exists(cls.__db_path(k)):
-            return set()
-
         with open (cls.__db_path(k), "r") as f:
             infos = f.read()
             return set(json.loads(infos)) if infos else set()
@@ -29,25 +27,21 @@ class Data:
     @classmethod
     #return list of key [key1, key2]
     def GetChildren(cls, part_of_k):
-        found = []
-        files = os.listdir(cls.DATA_PREFIX)  
+        import glob
+        likely = []
+        precise = None
+        files = glob.glob(r'%s/*%s*.json'%(cls.DATA_PREFIX, part_of_k))
         for f in files:
-            if(os.path.isfile(f)):
-                key_name = os.path.splitext(f)[0]
-                if key_name.find(part_of_k) >= 0:
-                    found.append(key_name)
-        return found
+            filename, _ = os.path.splitext(os.path.split(f)[-1])
+            if(part_of_k == filename):
+                precise = filename
+            elif (filename.startswith(part_of_k)):
+                likely.insert(0, filename)
+            else:
+                likely.append(filename)
 
-    @classmethod
-    #return list of key [key1, key2]
-    def GetChildren(cls):
-        found = []
-        files = os.listdir(cls.DATA_PREFIX)  
-        for f in files:
-            if(os.path.isfile(f)):
-                key_name = os.path.splitext(f)[0]
-                found.append(key_name)
-        return found
+        logger.debug("GetChildren,precise:%s, likely:%s", precise,likely)
+        return precise, likely
 
     @classmethod
     def Delete(cls, k):
@@ -62,21 +56,15 @@ class Faver:
         WoxAPI.show_msg(title, content, r"./Images/pic.png")
 
     @classmethod
-    def Tag(cls, para):
-        args = para.split(" ")
-        if len(args) < 2: # at least: label and url
-            return False
-
+    def Tag(cls, args):
         labels = args[:-1]
         url = args[-1]
         for label in labels:
-            urls = Data.Get(label)
-            logger.debug("Tag, get urls:%s", urls)
+
+            urls = set() if not Data.Exists(label) else Data.Get(label)
             urls.add(url)
-            logger.debug("Tag, new urls:%s", urls)
             Data.Set(label, urls)    
         cls.Alert("Success Tag!", "%s is taged"%url)
-        return True
 
     @classmethod
     def Untag(cls, para):
@@ -87,6 +75,9 @@ class Faver:
         label = args[0]
         url = args[-1]
 
+        if not Data.Exists(label):
+            return True
+        
         urls = Data.Get(label)
         if url in urls:
             urls.remove(url)
@@ -97,24 +88,57 @@ class Faver:
             Data.Delete(label)
         cls.Alert("Success Untag!", "TAG %s is removed"%label)
         return True
-        
+
     @classmethod
     def List(cls, para):
-        args = para.split(" ")
-        if len(args) == 0:
-            return set()
+        labels = para.split(" ")
+        if len(labels) == 0:
+            return False, "At least one label", list(), list()
 
-        found = Data.Get(args[0])
-        if len(args) == 1:
-            return found
+        for label in labels[:-1]:
+            if not Data.Exists(label):
+                return False, "Not found %s"%label, list(), list()
 
-        for arg in args[1:]:
-            if len(found) == 0:
-                break
-            urls = Data.Get(arg)
-            found = found & urls
+        precise, likely = Data.GetChildren(labels[-1])
+        if precise is None and len(likely) == 0:
+            return False, "Not found %s"%(labels[-1],), list(), list()
 
-        return found
+        common_urls = None
+        for label in labels[:-1]:
+            urls = Data.Get(label)
+            common_urls = common_urls & urls if common_urls is not None else urls
+            if len(common_urls) == 0:
+                return True, "", list(), list()
+
+        precise_labels = labels[:-1]
+        no_more = list()
+        found = list()
+        count = 0
+        if precise is not None:
+            urls = Data.Get(precise)
+            precise_common = common_urls & urls if common_urls is not None else urls      
+            found.append([para, precise_common])
+            count = 100 # if found precisely, likely no need to show details
+
+        for like in likely:
+            if like in precise_labels:
+                continue
+
+            k = " ".join(precise_labels + [like])
+            if count > 20:
+                no_more.append([k, "type label '%s' to show more"%like])
+                continue
+
+            urls = Data.Get(like)
+            like_common = common_urls & urls if common_urls is not None else urls
+            size = len(like_common)
+            if (size == 0):
+                continue
+
+            count += size
+            found.append([k, like_common])
+        logger.debug("List:found:%s, no_more:%s", found, no_more)
+        return True, "", found, no_more
 
 
     @classmethod
