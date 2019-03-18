@@ -53,7 +53,7 @@
 ![](readme/f_wox.png)
 
 
-可以使用多**label**精确定位
+可以使用多**label**精确定位，并且它支持**模糊匹配**
 
 ![](readme/f_wox_faver.png)
 
