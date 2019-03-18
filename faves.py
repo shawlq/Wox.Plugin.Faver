@@ -1,5 +1,5 @@
 import os, json
-from log import logger
+
 class Data:
     DATA_PREFIX = r"./data"
 
@@ -40,7 +40,6 @@ class Data:
             else:
                 likely.append(filename)
 
-        logger.debug("GetChildren,precise:%s, likely:%s", precise,likely)
         return precise, likely
 
     @classmethod
@@ -137,7 +136,6 @@ class Faver:
 
             count += size
             found.append([k, like_common])
-        logger.debug("List:found:%s, no_more:%s", found, no_more)
         return True, "", found, no_more
 
 

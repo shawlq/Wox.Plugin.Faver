@@ -1,11 +1,8 @@
 # coding:utf-8
 from wox import Wox
 from log import logger
-try:
-    from faves import Faver
-    from helper import Helper
-except Exception as e:
-    logger.exception("import exception:%s"%str(e))
+from faves import Faver
+from helper import Helper
 
 class QueryString:
     @classmethod
@@ -23,7 +20,6 @@ class Main(Wox):
         
 
     def query(self, inputs):
-        logger.debug("query, inputs:%s", inputs)
         try:
             if not inputs:
                 return Helper.ShowHelp()
@@ -68,7 +64,6 @@ class Main(Wox):
                 return [Helper.HELP_NONE(msg)]
 
             for labels, urls in found:
-                logger.debug("listin:%s", labels)
                 for url in urls:
                     results.append(Result(labels, url))
 
