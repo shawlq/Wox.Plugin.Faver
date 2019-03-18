@@ -21,7 +21,7 @@
 - 支持对1个url添加多个label
 - 支持删除label
 - 支持多label快速索引到网址
-- 支持模糊匹配label
+- 支持label的模糊匹配
 
 ### 快速使用
 1. **快捷键** alt+space（可自定义）
